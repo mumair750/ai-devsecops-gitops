@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: devsecops-app
   namespace: devsecops
+  labels:
+    app: devsecops-app
+    version: v1
 spec:
   replicas: 2
   selector:
@@ -12,9 +15,37 @@ spec:
     metadata:
       labels:
         app: devsecops-app
+        version: v1
     spec:
       containers:
-        - name: devsecops-app
-          image: mumairask750/ai-devsecops-java-app:latest
-          ports:
-            - containerPort: 8080
+      - name: devsecops-app
+        image: devsecopsacr1740498723.azurecr.io/ai-devsecops-java-app:latest  # Replace with your ACR name
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "production"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://devsecops-db.postgres.database.azure.com:5432/devsecops"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 5
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
