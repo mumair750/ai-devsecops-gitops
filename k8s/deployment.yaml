@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: devsecops-app
-        image: devsecopsacr1740498723.azurecr.io/ai-devsecops-java-app:latest  # Replace with your ACR name
+        image: devsecopsacr1781958109.azurecr.io/ai-devsecops-java-app:latest
         ports:
         - containerPort: 8080
         env:
